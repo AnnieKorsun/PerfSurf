@@ -1,22 +1,20 @@
-﻿(function() {
+﻿(function () {
+
     var perfHub = $.connection.perfHub;
     $.connection.hub.logging = true;
     $.connection.hub.start();
 
-    var Model = function () {
-        var self = this;
-        self.message = ko.observable("");
-        self.messages = ko.observableArray();
+    perfHub.client.NewMessage = function(message) {
+        model.addMessage(message);
     };
 
-    var model = new Model();
+    var Model = function() {
+        var self = this;
+        self.message = ko.observable(""),
+        self.messages = ko.observableArray()
+    };
 
-    perfHub.clientFailure.NewMessage = function(message) {
-        model.addMessage(message);
-    }
-    
     Model.prototype = {
-
         sendMessage: function() {
             var self = this;
             perfHub.server.send(self.message());
@@ -29,7 +27,9 @@
         }
     };
 
+    var model = new Model();
+
     $(function() {
         ko.applyBindings(model);
     });
-})
+}());
